@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wildlife Crossing Location Comparison</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles to mimic the card look and feel */
+        .wvc-heading {
+            color: #38761d; /* Dark green text */
+            border-bottom: 2px solid #38761d;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+            cursor: default;
+        }
+
+        /* Border Colors for Status (INVERSE LOGIC: CRITICAL is LOW score) */
+        .border-critical { border-left: 6px solid #cc0000; } /* Red for the worst scores (closest to 1) */
+        .border-high { border-left: 6px solid #ff9900; }    /* Orange for high priority */
+        .border-medium { border-left: 6px solid #f6b26b; }  /* Light orange/yellow for medium priority */
+        .border-low { border-left: 6px solid #6aa84f; }     /* Green for the best scores (highest number) */
+
+        /* Background Colors for Status */
+        .bg-critical { background-color: #fff0f0; } 
+        .bg-high { background-color: #fff8e8; }
+        .bg-medium { background-color: #fff3da; }
+        .bg-low { background-color: #f0fff0; }
+
+        /* Badge Colors */
+        .badge-critical { background-color: #cc0000; }
+        .badge-high { background-color: #ff9900; }
+        .badge-medium { background-color: #f6b26b; }
+        .badge-low { background-color: #6aa84f; }
+
+        /* Style for the data rows */
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .data-row strong {
+            font-weight: 500;
+        }
+        .data-value {
+            font-weight: 700;
+            color: #333;
+        }
+    </style>
+</head>
+<body class="bg-white p-4 font-sans antialiased">
+
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-extrabold wvc-heading">Location Matrix Comparison</h1>
+        <p class="text-sm text-gray-500 mb-6">
+            Comparison of key wildlife crossing locations. The **Total Score** indicates priority: 
+            <span class="font-bold text-red-600">Lower Scores ($\approx 1$)</span> = Highest Priority/Worst Conditions.
+        </p>
+
+        <!-- Grid Container for Cards - Now using lg:grid-cols-4 for 13 items -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+            <!-- Card Helper Component (JavaScript for dynamic data loading and styling) -->
+            <script>
+                // Logic based on Total Score: Closer to 1 is worse (Critical).
+                function getStatus(score) {
+                    if (score <= 3.5) return { status: 'CRITICAL', class: 'critical', label: 'Highest Priority' };
+                    if (score <= 4.5) return { status: 'HIGH', class: 'high', label: 'High Priority' };
+                    if (score <= 5.5) return { status: 'MEDIUM', class: 'medium', label: 'Medium Priority' };
+                    return { status: 'LOW', class: 'low', label: 'Lower Priority' };
+                }
+
+                const data = [
+                    // Data including the new Total Score (closer to 1 is worse)
+                    { location: "Berlin N", rate: 3.9, detections: 97, species: "Moose", infrastructure: "Full AOP", geo: "Mostly comp.", total_score: 3.8 },
+                    { location: "Berlin S", rate: 1.3, detections: 41, species: "Moose", infrastructure: "None", geo: "Partly comp.", total_score: 4.4 },
+                    { location: "Lebanon", rate: 18.6, detections: 39, species: "Gray fox", infrastructure: "None", geo: "Mostly comp.", total_score: 5.9 },
+                    { location: "Newbury", rate: 20.7, detections: 112, species: "Gray fox", infrastructure: "None", geo: "Mostly comp.", total_score: 5.5 },
+                    { location: "Concord", rate: 3.5, detections: 3, species: "Gray fox", infrastructure: "Reduced AOP", geo: "Partly comp.", total_score: 2.3 },
+                    { location: "Epsom S", rate: 15.1, detections: 75, species: "Gray fox", infrastructure: "Adult AOP", geo: "Mostly incomp.", total_score: 5.3 },
+                    { location: "Epsom N", rate: 13.5, detections: 56, species: "Gray fox", infrastructure: "None", geo: "Mostly incomp.", total_score: 5.3 },
+                    { location: "Epping", rate: 12.9, detections: 29, species: "Gray fox", infrastructure: "Reduced AOP", geo: "Mostly incomp.", total_score: 4.7 },
+                    { location: "Stratham", rate: 14.2, detections: 82, species: "Gray fox", infrastructure: "Reduced AOP", geo: "NA", total_score: 5.3 },
+                    { location: "Lee", rate: 4.4, detections: 44, species: "Gray fox", infrastructure: "Full AOP", geo: "Partly comp.", total_score: 3.1 },
+                    { location: "Barrington", rate: 21.7, detections: 107, species: "Gray fox", infrastructure: "Adult AOP", geo: "Mostly comp.", total_score: 5.4 },
+                    { location: "Alton", rate: 3.3, detections: 34, species: "N/A", infrastructure: "Reduced AOP", geo: "Partly comp.", total_score: 3.3 },
+                    { location: "Ossipee", rate: 1.3, detections: 24, species: "Gray fox", infrastructure: "Full AOP", geo: "Partly comp.", total_score: 5.1 }
+                ];
+
+                const container = document.querySelector('.grid');
+
+                data.forEach(item => {
+                    const statusInfo = getStatus(item.total_score);
+
+                    const cardHtml = `
+                        <div class="card ${statusInfo.class} border-${statusInfo.class} bg-${statusInfo.class} p-5 rounded-lg">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="text-xl font-bold text-gray-800">${item.location}</h3>
+                                <span class="badge badge-${statusInfo.class} text-white uppercase">${statusInfo.status}</span>
+                            </div>
+                            <div class="space-y-1 text-sm text-gray-700">
+                                <!-- TOTAL SCORE displayed prominently -->
+                                <div class="data-row bg-white/70 rounded px-2">
+                                    <strong class="text-base text-gray-800">Total Score Index</strong>
+                                    <span class="data-value text-xl font-extrabold text-${statusInfo.class === 'critical' ? 'red-700' : 'gray-800'}">${item.total_score.toFixed(1)}</span>
+                                </div>
+
+                                <!-- WVC Rate -->
+                                <div class="data-row">
+                                    <strong>WVC Rate*</strong>
+                                    <span class="data-value">${item.rate.toFixed(1)}</span>
+                                </div>
+                                <!-- Roadside Detections -->
+                                <div class="data-row">
+                                    <strong>Roadside Detections</strong>
+                                    <span class="data-value">${item.detections}</span>
+                                </div>
+                                <!-- Species of Concern -->
+                                <div class="data-row">
+                                    <strong>Species of Concern</strong>
+                                    <span class="data-value">${item.species}</span>
+                                </div>
+                                <!-- Geo Compatibility -->
+                                <div class="data-row">
+                                    <strong>Geo Compatibility</strong>
+                                    <span class="data-value">${item.geo}</span>
+                                </div>
+                                <div class="mt-4 pt-2 border-t border-gray-200">
+                                    <p class="text-xs text-gray-500 italic">Infrastructure: ${item.infrastructure}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += cardHtml;
+                });
+            </script>
+        </div>
+        <p class="text-xs text-gray-500 mt-6">*WVC Rate: Wildlife-Vehicle Collision Rate (per mile)</p>
+    </div>
+</body>
+</html>
