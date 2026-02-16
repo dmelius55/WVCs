@@ -1,59 +1,134 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Wildlife crossing priority assessment with interactive cards showing high, medium, and low priority sites">
-<meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self' https://*.arcgis.com https://storymaps.arcgis.com">
-<title>Crossing Priorities</title>
-<style>
-body{
-  font-family: Arial, sans-serif;
-  margin:20px;
-  background:#f4f4f4;
-}
-.grid{
-  display:grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
-  gap:16px;
-}
-.card{
-  background:white;
-  padding:16px;
-  border-radius:10px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.15);
-  border-left:8px solid gray;
-}
-.card.high{ border-color:#d73027; }
-.card.medium{ border-color:#fdae61; }
-.card.low{ border-color:#1a9850; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --high-color: #d32f2f; /* Red */
+            --medium-color: #f9a825; /* Yellow/Amber */
+            --low-color: #2e7d32; /* Green */
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        
+        .filter-container { margin-bottom: 20px; text-align: center; }
+        select { padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px; }
+
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #fffdf7;
+            border-radius: 8px;
+            border-top: 15px solid;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Priority Colors */
+        .card.high { border-color: var(--high-color); }
+        .card.medium { border-color: var(--medium-color); }
+        .card.low { border-color: var(--low-color); }
+
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .card-header h2 { margin: 0; font-size: 1.4rem; color: #333; }
+        .priority-label { font-weight: bold; padding: 2px 8px; border-radius: 4px; color: white; text-transform: uppercase; font-size: 0.8rem; }
+        
+        .card.high .priority-label { background: var(--high-color); }
+        .card.medium .priority-label { background: var(--medium-color); }
+        .card.low .priority-label { background: var(--low-color); }
+
+        .data-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 0.95rem; }
+        .data-label { font-weight: 600; color: #555; }
+        .data-value { font-weight: bold; color: #000; }
+        
+        .footer-note { margin-top: 15px; font-style: italic; font-size: 0.85rem; color: #777; border-top: 1px dashed #ccc; padding-top: 10px; }
+    </style>
 </head>
 <body>
-<h2>Crossing Priorities</h2>
-<div id="cards" class="grid"></div>
+
+<div class="filter-container">
+    <label for="priorityFilter">Filter by Priority: </label>
+    <select id="priorityFilter" onchange="filterCards()">
+        <option value="all">All Locations</option>
+        <option value="high">🔴 High Priority</option>
+        <option value="medium">🟡 Medium Priority</option>
+        <option value="low">🟢 Low Priority</option>
+    </select>
+</div>
+
+<div class="matrix-grid" id="cardGrid">
+    <div class="card high" data-priority="high">
+        <div class="card-header">
+            <h2>Lebanon (3689)</h2>
+            <span class="priority-label">High</span>
+        </div>
+        <div class="data-row"><span class="data-label">Total Score:</span><span class="data-value">4</span></div>
+        <div class="data-row"><span class="data-label">AOP:</span><span class="data-value">No Pass</span></div>
+        <div class="data-row"><span class="data-label">Structural (SC):</span><span class="data-value">Poor</span></div>
+        <div class="data-row"><span class="data-label">Geo Comp:</span><span class="data-value">Mostly Impassable</span></div>
+        <div class="footer-note">Infrastructure: Box Culvert</div>
+    </div>
+
+    <div class="card high" data-priority="high">
+        <div class="card-header">
+            <h2>Epsom (12924)</h2>
+            <span class="priority-label">High</span>
+        </div>
+        <div class="data-row"><span class="data-label">Total Score:</span><span class="data-value">6</span></div>
+        <div class="data-row"><span class="data-label">AOP:</span><span class="data-value">No Pass</span></div>
+        <div class="data-row"><span class="data-label">Structural (SC):</span><span class="data-value">Good</span></div>
+        <div class="data-row"><span class="data-label">Geo Comp:</span><span class="data-value">Mostly Impassable</span></div>
+        <div class="footer-note">Infrastructure: Round Culvert</div>
+    </div>
+
+    <div class="card medium" data-priority="medium">
+        <div class="card-header">
+            <h2>Barrington (515)</h2>
+            <span class="priority-label">Medium</span>
+        </div>
+        <div class="data-row"><span class="data-label">Total Score:</span><span class="data-value">9</span></div>
+        <div class="data-row"><span class="data-label">AOP:</span><span class="data-value">Full Passage</span></div>
+        <div class="data-row"><span class="data-label">Structural (SC):</span><span class="data-value">Good</span></div>
+        <div class="data-row"><span class="data-label">Geo Comp:</span><span class="data-value">Partially Compatible</span></div>
+        <div class="footer-note">Infrastructure: Elliptic</div>
+    </div>
+
+    <div class="card low" data-priority="low">
+        <div class="card-header">
+            <h2>Berlin (93749)</h2>
+            <span class="priority-label">Low</span>
+        </div>
+        <div class="data-row"><span class="data-label">Total Score:</span><span class="data-value">12</span></div>
+        <div class="data-row"><span class="data-label">AOP:</span><span class="data-value">Full Passage</span></div>
+        <div class="data-row"><span class="data-label">Structural (SC):</span><span class="data-value">Good</span></div>
+        <div class="data-row"><span class="data-label">Geo Comp:</span><span class="data-value">Mostly Compat</span></div>
+        <div class="footer-note">Infrastructure: Bridge</div>
+    </div>
+</div>
+
 <script>
-fetch("WWCResults.csv")  // ← FIXED: Changed from WVCResults to WWCResults
-  .then(response => response.text())
-  .then(text => {
-    const rows = text.split("\n").slice(1);
-    const container = document.getElementById("cards");
-    rows.forEach(row => {
-      if(!row.trim()) return;
-      const cols = row.split(",");
-      const name = cols[0];
-      const score = cols[cols.length-2];
-      const priority = cols[cols.length-1].toLowerCase().trim();
-      const card = document.createElement("div");
-      card.className = `card ${priority}`;
-      card.innerHTML = `
-        <h3>${name}</h3>
-        <p><b>Total Score:</b> ${score}</p>
-        <p><b>Priority:</b> ${priority}</p>
-      `;
-      container.appendChild(card);
-    });
-});
+    function filterCards() {
+        const filterValue = document.getElementById('priorityFilter').value;
+        const cards = document.querySelectorAll('.card');
+        
+        cards.forEach(card => {
+            if (filterValue === 'all' || card.getAttribute('data-priority') === filterValue) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
 </script>
+
 </body>
 </html>
