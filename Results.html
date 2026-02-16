@@ -122,54 +122,48 @@
 
   <!-- INTRO -->
   <div class="intro">
-  <h2>How to Read These Hotspot Cards</h2>
+    <h2>How to Read These Hotspot Cards</h2>
 
-  <p>
-    Each card summarizes environmental and structural conditions at our 13
-    wildlife–vehicle collision hotspot locations.
-  </p>
+    <p>
+      Each card summarizes environmental and structural conditions at our 13
+      wildlife–vehicle collision hotspot locations.
+    </p>
 
-  <p>
-    Colored dots show how well each site supports wildlife movement and stream function.
-  </p>
+    <p>
+      Colored dots show how well each site supports wildlife movement and stream function.
+    </p>
 
-  <div class="definitions">
-    <div><strong>🟢 Green (3):</strong> Conditions are good and closely match natural stream and wildlife needs.</div>
-    <div><strong>🟡 Yellow (2):</strong> Conditions are functional but partially limiting.</div>
-    <div><strong>🔴 Red (1):</strong> Conditions strongly limit wildlife movement or natural stream processes.</div>
+    <div class="definitions">
+      <div><strong>🟢 Green (3):</strong> Conditions are good and closely match natural stream and wildlife needs.</div>
+      <div><strong>🟡 Yellow (2):</strong> Conditions are functional but partially limiting.</div>
+      <div><strong>🔴 Red (1):</strong> Conditions strongly limit wildlife movement or natural stream processes.</div>
 
-    <div><strong>💧 Aquatic Organism Passage (AOP):</strong> Ability for aquatic species to move through the structure.</div>
-    <div><strong>🛠️ Structural Condition (SC):</strong> Physical condition of the culvert or crossing.</div>
-    <div><strong>🌍 Geomorphic Compatibility (GC):</strong> How well the structure matches natural stream shape and flow.</div>
+      <div><strong>💧 Aquatic Organism Passage (AOP):</strong> Ability for aquatic species to move through the structure.</div>
+      <div><strong>🛠️ Structural Condition (SC):</strong> Physical condition of the culvert or crossing.</div>
+      <div><strong>🌍 Geomorphic Compatibility (GC):</strong> How well the structure matches natural stream shape and flow.</div>
+    </div>
   </div>
-</div>
-
-  container.appendChild(card);
-});
-</script>
-
-</body>
-</html>
 
   <!-- CARDS -->
   <div class="cards" id="cards"></div>
+
 </div>
 
 <script>
 const data = [
-  { site:"Berlin (93749)", priority:"Low", total:12, AOP:3, SC:3, GC:3, Open:3 },
-  { site:"Barrington (515)", priority:"Medium", total:9, AOP:3, SC:3, GC:2, Open:1 },
-  { site:"Ossipee (96289)", priority:"Medium", total:9, AOP:3, SC:2, GC:2, Open:2 },
-  { site:"Stratham (471)", priority:"Medium", total:9, AOP:2, SC:3, GC:2, Open:2 },
-  { site:"Alton (98140)", priority:"Medium", total:8, AOP:2, SC:3, GC:2, Open:1 },
-  { site:"Barrington (624)", priority:"Medium", total:8, AOP:2, SC:3, GC:1, Open:2 },
-  { site:"Epsom (226)", priority:"Medium", total:7, AOP:2, SC:3, GC:1, Open:1 },
-  { site:"Concord (34377)", priority:"Medium", total:7, AOP:2, SC:2, GC:2, Open:1 },
-  { site:"Epping (106527)", priority:"High", total:6, AOP:2, SC:2, GC:1, Open:1 },
-  { site:"Berlin (93607)", priority:"Medium", total:8, AOP:1, SC:3, GC:2, Open:2 },
-  { site:"Epsom (12924)", priority:"High", total:6, AOP:1, SC:3, GC:1, Open:1 },
-  { site:"Lebanon (3689)", priority:"High", total:4, AOP:1, SC:1, GC:1, Open:1 },
-  { site:"Newberry (4180)", priority:"Medium", total:7, AOP:1, SC:3, GC:2, Open:1 }
+  { site:"Berlin (93749)", priority:"Low", total:12, AOP:3, SC:3, GC:3 },
+  { site:"Barrington (515)", priority:"Medium", total:9, AOP:3, SC:3, GC:2 },
+  { site:"Ossipee (96289)", priority:"Medium", total:9, AOP:3, SC:2, GC:2 },
+  { site:"Stratham (471)", priority:"Medium", total:9, AOP:2, SC:3, GC:2 },
+  { site:"Alton (98140)", priority:"Medium", total:8, AOP:2, SC:3, GC:2 },
+  { site:"Barrington (624)", priority:"Medium", total:8, AOP:2, SC:3, GC:1 },
+  { site:"Epsom (226)", priority:"Medium", total:7, AOP:2, SC:3, GC:1 },
+  { site:"Concord (34377)", priority:"Medium", total:7, AOP:2, SC:2, GC:2 },
+  { site:"Epping (106527)", priority:"High", total:6, AOP:2, SC:2, GC:1 },
+  { site:"Berlin (93607)", priority:"Medium", total:8, AOP:1, SC:3, GC:2 },
+  { site:"Epsom (12924)", priority:"High", total:6, AOP:1, SC:3, GC:1 },
+  { site:"Lebanon (3689)", priority:"High", total:4, AOP:1, SC:1, GC:1 },
+  { site:"Newberry (4180)", priority:"Medium", total:7, AOP:1, SC:3, GC:2 }
 ];
 
 function dotColor(value) {
@@ -178,7 +172,7 @@ function dotColor(value) {
   return "red";
 }
 
-const container = document.getElementById("cards");
+const cardsContainer = document.getElementById("cards");
 
 data.forEach(d => {
   const card = document.createElement("div");
@@ -205,3 +199,10 @@ data.forEach(d => {
 
     <div class="score">Total Score: ${d.total}</div>
   `;
+
+  cardsContainer.appendChild(card);
+});
+</script>
+
+</body>
+</html>
