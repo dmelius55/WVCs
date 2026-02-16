@@ -1,133 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        :root {
-            --high-color: #d32f2f; /* Red */
-            --medium-color: #f9a825; /* Yellow/Amber */
-            --low-color: #2e7d32; /* Green */
-        }
+<meta charset="UTF-8" />
+<title>Wildlife–Vehicle Collision Hotspots</title>
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; padding: 20px; }
-        
-        .filter-container { margin-bottom: 20px; text-align: center; }
-        select { padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px; }
+<style>
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f9f6ed;
+    color: #2b2b2b;
+  }
 
-        .matrix-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+  .container {
+    max-width: 900px;
+    margin: auto;
+    padding: 24px;
+  }
 
-        .card {
-            background: #fffdf7;
-            border-radius: 8px;
-            border-top: 15px solid;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
+  /* ---------- EXPLANATION ---------- */
+  .intro {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
 
-        /* Priority Colors */
-        .card.high { border-color: var(--high-color); }
-        .card.medium { border-color: var(--medium-color); }
-        .card.low { border-color: var(--low-color); }
+  .intro h2 {
+    margin-top: 0;
+    color: #3b4a3f;
+  }
 
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .card-header h2 { margin: 0; font-size: 1.4rem; color: #333; }
-        .priority-label { font-weight: bold; padding: 2px 8px; border-radius: 4px; color: white; text-transform: uppercase; font-size: 0.8rem; }
-        
-        .card.high .priority-label { background: var(--high-color); }
-        .card.medium .priority-label { background: var(--medium-color); }
-        .card.low .priority-label { background: var(--low-color); }
+  .definitions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    font-size: 0.95rem;
+  }
 
-        .data-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 0.95rem; }
-        .data-label { font-weight: 600; color: #555; }
-        .data-value { font-weight: bold; color: #000; }
-        
-        .footer-note { margin-top: 15px; font-style: italic; font-size: 0.85rem; color: #777; border-top: 1px dashed #ccc; padding-top: 10px; }
-    </style>
+  .definitions strong {
+    color: #3b4a3f;
+  }
+
+  /* ---------- CARD GRID ---------- */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+  }
+
+  /* ---------- CARD ---------- */
+  .card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    position: relative;
+  }
+
+  .priority {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 6px 10px;
+    border-radius: 999px;
+    display: inline-block;
+    margin-bottom: 10px;
+    color: #fff;
+  }
+
+  .priority.high { background: #c0392b; }
+  .priority.medium { background: #e67e22; }
+  .priority.low { background: #27ae60; }
+
+  .card h3 {
+    margin: 6px 0 14px;
+    font-size: 1.1rem;
+    color: #2f3e34;
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+  }
+
+  .label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .icon {
+    font-size: 1.1rem;
+  }
+
+  /* ---------- SCORE DOT ---------- */
+  .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+  }
+
+  .dot.red { background: #c0392b; }
+  .dot.orange { background: #e67e22; }
+  .dot.green { background: #27ae60; }
+
+  .score {
+    margin-top: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #444;
+  }
+</style>
 </head>
+
 <body>
+<div class="container">
 
-<div class="filter-container">
-    <label for="priorityFilter">Filter by Priority: </label>
-    <select id="priorityFilter" onchange="filterCards()">
-        <option value="all">All Locations</option>
-        <option value="high">🔴 High Priority</option>
-        <option value="medium">🟡 Medium Priority</option>
-        <option value="low">🟢 Low Priority</option>
-    </select>
-</div>
+  <!-- INTRO / DEFINITIONS -->
+  <div class="intro">
+    <h2>How to Read These Hotspot Cards</h2>
+    <p>
+      Each card summarizes conditions at a wildlife–vehicle collision hotspot.
+      Scores combine ecological impact, infrastructure condition, and movement
+      barriers to identify locations where mitigation would provide the greatest benefit.
+    </p>
 
-<div class="matrix-grid" id="cardGrid">
-    <div class="card high" data-priority="high">
-        <div class="card-header">
-            <h2>Lebanon (3689)</h2>
-            <span class="priority-label">High</span>
-        </div>
-        <div class="data-row"><span class="data-label">Total Score:</span><span class="data-value">4</span></div>
-        <div class="data-row"><span class="data-label">AOP:</span><span class="data-value">No Pass</span></div>
-        <div class="data-row"><span class="data-label">Structural (SC):</span><span class="data-value">Poor</span></div>
-        <div class="data-row"><span class="data-label">Geo Comp:</span><span class="data-value">Mostly Impassable</span></div>
-        <div class="footer-note">Infrastructure: Box Culvert</div>
+    <div class="definitions">
+      <div><strong>🐾 Aquatic Organism Passage:</strong> Ability for fish and other aquatic species to move through the structure.</div>
+      <div><strong>🏗 Structural Condition:</strong> Physical condition of the culvert or crossing.</div>
+      <div><strong>🌍 Geomorphic Compatibility:</strong> How well the structure matches natural stream shape and flow.</div>
+      <div><strong>🟢 Open Ratio:</strong> Width of structure relative to stream width (lower = more restrictive).</div>
     </div>
+  </div>
 
-    <div class="card high" data-priority="high">
-        <div class="card-header">
-            <h2>Epsom (12924)</h2>
-            <span class="priority-label">High</span>
-        </div>
-        <div class="data-row"><span class="data-label">Total Score:</span><span class="data-value">6</span></div>
-        <div class="data-row"><span class="data-label">AOP:</span><span class="data-value">No Pass</span></div>
-        <div class="data-row"><span class="data-label">Structural (SC):</span><span class="data-value">Good</span></div>
-        <div class="data-row"><span class="data-label">Geo Comp:</span><span class="data-value">Mostly Impassable</span></div>
-        <div class="footer-note">Infrastructure: Round Culvert</div>
-    </div>
-
-    <div class="card medium" data-priority="medium">
-        <div class="card-header">
-            <h2>Barrington (515)</h2>
-            <span class="priority-label">Medium</span>
-        </div>
-        <div class="data-row"><span class="data-label">Total Score:</span><span class="data-value">9</span></div>
-        <div class="data-row"><span class="data-label">AOP:</span><span class="data-value">Full Passage</span></div>
-        <div class="data-row"><span class="data-label">Structural (SC):</span><span class="data-value">Good</span></div>
-        <div class="data-row"><span class="data-label">Geo Comp:</span><span class="data-value">Partially Compatible</span></div>
-        <div class="footer-note">Infrastructure: Elliptic</div>
-    </div>
-
-    <div class="card low" data-priority="low">
-        <div class="card-header">
-            <h2>Berlin (93749)</h2>
-            <span class="priority-label">Low</span>
-        </div>
-        <div class="data-row"><span class="data-label">Total Score:</span><span class="data-value">12</span></div>
-        <div class="data-row"><span class="data-label">AOP:</span><span class="data-value">Full Passage</span></div>
-        <div class="data-row"><span class="data-label">Structural (SC):</span><span class="data-value">Good</span></div>
-        <div class="data-row"><span class="data-label">Geo Comp:</span><span class="data-value">Mostly Compat</span></div>
-        <div class="footer-note">Infrastructure: Bridge</div>
-    </div>
+  <!-- CARDS -->
+  <div class="cards" id="cards"></div>
 </div>
 
 <script>
-    function filterCards() {
-        const filterValue = document.getElementById('priorityFilter').value;
-        const cards = document.querySelectorAll('.card');
-        
-        cards.forEach(card => {
-            if (filterValue === 'all' || card.getAttribute('data-priority') === filterValue) {
-                card.style.display = 'flex';
-            } else {
-                card.style.display = 'none';
-            }
-        });
-    }
+const data = [
+  { site: "Berlin (93749)", priority: "Low", score: 12, passage: "Full Passage", structure: "Good", geomorph: "Mostly Compatible" },
+  { site: "Barrington (515)", priority: "Medium", score: 9, passage: "Full Passage", structure: "Good", geomorph: "Partially Compatible" },
+  { site: "Ossipee (96289)", priority: "Medium", score: 9, passage: "Full Passage", structure: "Fair", geomorph: "Partially Compatible" },
+  { site: "Stratham (471)", priority: "Medium", score: 9, passage: "Reduced Passage", structure: "Good", geomorph: "Wetland" },
+  { site: "Alton (98140)", priority: "Medium", score: 8, passage: "Reduced Passage", structure: "Good", geomorph: "Partially Compatible" },
+  { site: "Barrington (624)", priority: "Medium", score: 8, passage: "Reduced Passage", structure: "Good", geomorph: "Mostly Impassable" },
+  { site: "Epsom (226)", priority: "Medium", score: 7, passage: "Reduced Passage", structure: "Good", geomorph: "Mostly Impassable" },
+  { site: "Concord (34377)", priority: "Medium", score: 7, passage: "Reduced Passage", structure: "Fair", geomorph: "Partially Compatible" },
+  { site: "Epping (106527)", priority: "High", score: 6, passage: "Reduced Passage", structure: "Fair", geomorph: "Mostly Impassable" },
+  { site: "Berlin (93607)", priority: "Medium", score: 8, passage: "No Passage", structure: "Good", geomorph: "Partially Compatible" },
+  { site: "Epsom (12924)", priority: "High", score: 6, passage: "No Passage", structure: "Good", geomorph: "Mostly Impassable" },
+  { site: "Lebanon (3689)", priority: "High", score: 4, passage: "No Passage", structure: "Poor", geomorph: "Mostly Impassable" },
+  { site: "Newberry (4180)", priority: "Medium", score: 7, passage: "No Passage", structure: "Good", geomorph: "Partially Compatible" }
+];
+
+function scoreColor(score) {
+  if (score <= 5) return "red";
+  if (score <= 8) return "orange";
+  return "green";
+}
+
+const container = document.getElementById("cards");
+
+data.forEach(d => {
+  const card = document.createElement("div");
+  card.className = "card";
+
+  card.innerHTML = `
+    <span class="priority ${d.priority.toLowerCase()}">${d.priority.toUpperCase()} PRIORITY</span>
+    <h3>${d.site}</h3>
+
+    <div class="row">
+      <div class="label"><span class="icon">🐾</span>${d.passage}</div>
+      <div class="dot ${scoreColor(d.score)}"></div>
+    </div>
+
+    <div class="row">
+      <div class="label"><span class="icon">🏗</span>${d.structure}</div>
+      <div class="dot ${scoreColor(d.score)}"></div>
+    </div>
+
+    <div class="row">
+      <div class="label"><span class="icon">🌍</span>${d.geomorph}</div>
+      <div class="dot ${scoreColor(d.score)}"></div>
+    </div>
+
+    <div class="score">Total Score: ${d.score}</div>
+  `;
+
+  container.appendChild(card);
+});
 </script>
 
 </body>
