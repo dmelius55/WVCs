@@ -1,0 +1,15 @@
+﻿,,,,,,,,
+Location (Site ID),Type,Struct,AOP,SC,GC,Open,Total Score,priority
+Berlin  (93749),Stream,Bridge,Full passage,Good,Mostly compat,5.2,12,Low
+Barrington (515),Stream,Ellip,Full passage,Good,Partially compatible,0.63,9,Medium
+Ossipee (96289),Stream,Embed ellip,Full passage,Fair,Partially compatible,1.4,9,Medium
+Stratham (471),"Stream, Wetland",Ellip,Reduced pass,Good,NA (wetland),1,9,Medium
+Alton (98140),Stream,Round,Reduced pass,Good,Partially compatible,0.36,8,Medium
+Barrington (624),Stream,Ellip,Reduced pass,Good,Mostly impassable,1.2,8,Medium
+Epsom (226),Stream,Round,Reduced pass,Good,Mostly impassable,0.17,7,Medium
+Concord (34377),Stream,Round,Reduced Pass,Fair,Partially compatible,0.02,7,Medium
+Epping (106527),Stream,Round,Reduced pass,Fair,Mostly impassable,0.2,6,High
+Berlin (93607),Stream,Box,No pass,Good,Partially compatible,1.11,8,Medium
+Epsom (12924),Stream,Round,No pass,Good,Mostly impassable,0.37,6,High
+Lebanon(3689),Stream,Box,No Pass,Poor,Mostly impassable,0.32,4,High
+Newberry (4180),Stream,Round,No Pass,Good,Partially compatible,0.37,7,Medium
