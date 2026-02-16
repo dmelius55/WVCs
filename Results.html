@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Wildlife crossing priority assessment showing high, medium, and low priority sites">
+<meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self' https://*.arcgis.com https://storymaps.arcgis.com">
 <title>Wildlife–Vehicle Collision Hotspots</title>
 
 <style>
@@ -32,15 +35,99 @@
     color: #3b4a3f;
   }
 
+  .intro p {
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .scoring-note {
+    background: #f0f4f0;
+    padding: 14px;
+    border-radius: 8px;
+    margin: 16px 0;
+    border-left: 4px solid #27ae60;
+  }
+
+  .scoring-note strong {
+    color: #3b4a3f;
+  }
+
   .definitions {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 14px;
     font-size: 0.95rem;
+    margin-top: 16px;
+  }
+
+  .definitions > div {
+    padding: 10px;
+    background: #fafafa;
+    border-radius: 6px;
   }
 
   .definitions strong {
     color: #3b4a3f;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* ---------- FILTER ---------- */
+  .filter-section {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .filter-label {
+    font-weight: 600;
+    color: #3b4a3f;
+    margin-right: 8px;
+  }
+
+  .filter-btn {
+    padding: 10px 20px;
+    border: 2px solid #ddd;
+    background: white;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #555;
+  }
+
+  .filter-btn:hover {
+    border-color: #3b4a3f;
+    background: #f9f6ed;
+  }
+
+  .filter-btn.active {
+    color: white;
+    border-color: transparent;
+  }
+
+  .filter-btn.all.active {
+    background: #3b4a3f;
+  }
+
+  .filter-btn.high.active {
+    background: #c0392b;
+  }
+
+  .filter-btn.medium.active {
+    background: #e67e22;
+  }
+
+  .filter-btn.low.active {
+    background: #27ae60;
   }
 
   /* ---------- CARD GRID ---------- */
@@ -50,12 +137,22 @@
     gap: 18px;
   }
 
+  .card.hidden {
+    display: none;
+  }
+
   /* ---------- CARD ---------- */
   .card {
     background: #ffffff;
     border-radius: 14px;
     padding: 18px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
   }
 
   .priority {
@@ -67,6 +164,7 @@
     display: inline-block;
     margin-bottom: 10px;
     color: #fff;
+    text-transform: uppercase;
   }
 
   .priority.high { background: #c0392b; }
@@ -102,6 +200,7 @@
     width: 14px;
     height: 14px;
     border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
   }
 
   .dot.red { background: #c0392b; }
@@ -110,6 +209,8 @@
 
   .score {
     margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #eee;
     font-weight: 600;
     font-size: 0.9rem;
     color: #444;
@@ -125,23 +226,63 @@
     <h2>How to Read These Hotspot Cards</h2>
 
     <p>
-      Each card summarizes environmental and structural conditions at our 13
-      wildlife–vehicle collision hotspot locations.
+      Each card summarizes environmental and structural conditions at wildlife–vehicle collision hotspot locations in New Hampshire. These assessments help prioritize which crossings need improvements most urgently.
     </p>
 
+    <div class="scoring-note">
+      <strong>🎯 Priority Scoring:</strong> Each site is scored on four criteria. <strong>Lower total scores indicate worse conditions and higher priority</strong> for intervention. The worst possible score is 4 (all red dots), the best is 12 (all green dots).
+    </div>
+
     <p>
-      Colored dots show how well each site supports wildlife movement and stream function.
+      <strong>Colored dots show current conditions and points assigned:</strong>
     </p>
 
     <div class="definitions">
-      <div><strong>🟢 Green (3):</strong> Conditions are good and closely match natural stream and wildlife needs.</div>
-      <div><strong>🟡 Yellow (2):</strong> Conditions are functional but partially limiting.</div>
-      <div><strong>🔴 Red (1):</strong> Conditions strongly limit wildlife movement or natural stream processes.</div>
-
-      <div><strong>💧 Aquatic Organism Passage (AOP):</strong> Ability for aquatic species to move through the structure.</div>
-      <div><strong>🛠️ Structural Condition (SC):</strong> Physical condition of the culvert or crossing.</div>
-      <div><strong>🌍 Geomorphic Compatibility (GC):</strong> How well the structure matches natural stream shape and flow.</div>
+      <div>
+        <strong>🟢 Green (3 points):</strong>
+        Conditions are good and closely match natural stream and wildlife needs.
+      </div>
+      <div>
+        <strong>🟡 Yellow (2 points):</strong>
+        Conditions are functional but partially limiting.
+      </div>
+      <div>
+        <strong>🔴 Red (1 point):</strong>
+        Conditions strongly limit wildlife movement or natural stream processes.
+      </div>
     </div>
+
+    <p style="margin-top: 16px;">
+      <strong>Four assessment criteria:</strong>
+    </p>
+
+    <div class="definitions">
+      <div>
+        <strong>💧 Aquatic Organism Passage (AOP)</strong>
+        Ability for fish and aquatic species to move through the structure.
+      </div>
+      <div>
+        <strong>🛠️ Structural Condition (SC)</strong>
+        Physical condition and integrity of the culvert or crossing.
+      </div>
+      <div>
+        <strong>🌍 Geomorphic Compatibility (GC)</strong>
+        How well the structure matches natural stream shape and flow patterns.
+      </div>
+      <div>
+        <strong>📏 Openness (Open)</strong>
+        Ratio of crossing dimensions that affects wildlife willingness to pass through.
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTER -->
+  <div class="filter-section">
+    <span class="filter-label">Filter by Priority:</span>
+    <button class="filter-btn all active" data-filter="all">All Locations</button>
+    <button class="filter-btn high" data-filter="high">High Priority</button>
+    <button class="filter-btn medium" data-filter="medium">Medium Priority</button>
+    <button class="filter-btn low" data-filter="low">Low Priority</button>
   </div>
 
   <!-- CARDS -->
@@ -150,23 +291,27 @@
 </div>
 
 <script>
+// Data representing the 13 hotspot locations
+// Scoring system: Green (best) = 3, Yellow = 2, Red (worst) = 1
+// Lower total score = worse conditions = higher priority
 const data = [
-  { site:"Berlin (93749)", priority:"Low", total:12, AOP:3, SC:3, GC:3 },
-  { site:"Barrington (515)", priority:"Medium", total:9, AOP:3, SC:3, GC:2 },
-  { site:"Ossipee (96289)", priority:"Medium", total:9, AOP:3, SC:2, GC:2 },
-  { site:"Stratham (471)", priority:"Medium", total:9, AOP:2, SC:3, GC:2 },
-  { site:"Alton (98140)", priority:"Medium", total:8, AOP:2, SC:3, GC:2 },
-  { site:"Barrington (624)", priority:"Medium", total:8, AOP:2, SC:3, GC:1 },
-  { site:"Epsom (226)", priority:"Medium", total:7, AOP:2, SC:3, GC:1 },
-  { site:"Concord (34377)", priority:"Medium", total:7, AOP:2, SC:2, GC:2 },
-  { site:"Epping (106527)", priority:"High", total:6, AOP:2, SC:2, GC:1 },
-  { site:"Berlin (93607)", priority:"Medium", total:8, AOP:1, SC:3, GC:2 },
-  { site:"Epsom (12924)", priority:"High", total:6, AOP:1, SC:3, GC:1 },
-  { site:"Lebanon (3689)", priority:"High", total:4, AOP:1, SC:1, GC:1 },
-  { site:"Newberry (4180)", priority:"Medium", total:7, AOP:1, SC:3, GC:2 }
+  { site:"Berlin (93749)", priority:"Low", AOP:3, SC:3, GC:3, Open:3 },
+  { site:"Barrington (515)", priority:"Medium", AOP:3, SC:3, GC:2, Open:1 },
+  { site:"Ossipee (96289)", priority:"Medium", AOP:3, SC:2, GC:2, Open:2 },
+  { site:"Stratham (471)", priority:"Medium", AOP:2, SC:3, GC:2, Open:2 },
+  { site:"Alton (98140)", priority:"Medium", AOP:2, SC:3, GC:2, Open:1 },
+  { site:"Barrington (624)", priority:"Medium", AOP:2, SC:3, GC:1, Open:2 },
+  { site:"Epsom (226)", priority:"Medium", AOP:2, SC:3, GC:1, Open:1 },
+  { site:"Concord (34377)", priority:"Medium", AOP:2, SC:2, GC:2, Open:1 },
+  { site:"Epping (106527)", priority:"High", AOP:2, SC:2, GC:1, Open:1 },
+  { site:"Berlin (93607)", priority:"Medium", AOP:1, SC:3, GC:2, Open:2 },
+  { site:"Epsom (12924)", priority:"High", AOP:1, SC:3, GC:1, Open:1 },
+  { site:"Lebanon (3689)", priority:"High", AOP:1, SC:1, GC:1, Open:1 },
+  { site:"Newberry (4180)", priority:"Medium", AOP:1, SC:3, GC:2, Open:1 }
 ];
 
 function dotColor(value) {
+  // 3 = green (best), 2 = yellow, 1 = red (worst)
   if (value === 3) return "green";
   if (value === 2) return "yellow";
   return "red";
@@ -175,8 +320,12 @@ function dotColor(value) {
 const cardsContainer = document.getElementById("cards");
 
 data.forEach(d => {
+  // Calculate total score (sum of four criteria)
+  const total = d.AOP + d.SC + d.GC + d.Open;
+  
   const card = document.createElement("div");
   card.className = "card";
+  card.setAttribute("data-priority", d.priority.toLowerCase());
 
   card.innerHTML = `
     <span class="priority ${d.priority.toLowerCase()}">${d.priority.toUpperCase()} PRIORITY</span>
@@ -197,10 +346,46 @@ data.forEach(d => {
       <div class="dot ${dotColor(d.GC)}"></div>
     </div>
 
-    <div class="score">Total Score: ${d.total}</div>
+    <div class="row">
+      <div class="label"><span class="icon">📏</span>Openness</div>
+      <div class="dot ${dotColor(d.Open)}"></div>
+    </div>
+
+    <div class="score">Total Score: ${total} / 12</div>
   `;
 
   cardsContainer.appendChild(card);
+});
+
+// Filter functionality
+const filterButtons = document.querySelectorAll('.filter-btn');
+const cards = document.querySelectorAll('.card');
+
+filterButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    // Remove active class from all buttons
+    filterButtons.forEach(btn => btn.classList.remove('active'));
+    
+    // Add active class to clicked button
+    button.classList.add('active');
+    
+    // Get filter value
+    const filterValue = button.getAttribute('data-filter');
+    
+    // Show/hide cards based on filter
+    cards.forEach(card => {
+      if (filterValue === 'all') {
+        card.classList.remove('hidden');
+      } else {
+        const cardPriority = card.getAttribute('data-priority');
+        if (cardPriority === filterValue) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      }
+    });
+  });
 });
 </script>
 
