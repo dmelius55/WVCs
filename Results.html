@@ -2,21 +2,21 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Wildlife crossing priority assessment with interactive cards showing high, medium, and low priority sites">
+<meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self' https://*.arcgis.com https://storymaps.arcgis.com">
 <title>Crossing Priorities</title>
-
 <style>
 body{
   font-family: Arial, sans-serif;
   margin:20px;
   background:#f4f4f4;
 }
-
 .grid{
   display:grid;
   grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
   gap:16px;
 }
-
 .card{
   background:white;
   padding:16px;
@@ -24,49 +24,36 @@ body{
   box-shadow:0 2px 6px rgba(0,0,0,0.15);
   border-left:8px solid gray;
 }
-
 .card.high{ border-color:#d73027; }
 .card.medium{ border-color:#fdae61; }
 .card.low{ border-color:#1a9850; }
 </style>
-
 </head>
-
 <body>
-
 <h2>Crossing Priorities</h2>
 <div id="cards" class="grid"></div>
-
 <script>
-fetch("WVCResults.csv")
+fetch("WWCResults.csv")  // ← FIXED: Changed from WVCResults to WWCResults
   .then(response => response.text())
   .then(text => {
-
     const rows = text.split("\n").slice(1);
     const container = document.getElementById("cards");
-
     rows.forEach(row => {
       if(!row.trim()) return;
-
       const cols = row.split(",");
-
       const name = cols[0];
       const score = cols[cols.length-2];
-      const priority = cols[cols.length-1].toLowerCase();
-
+      const priority = cols[cols.length-1].toLowerCase().trim();
       const card = document.createElement("div");
       card.className = `card ${priority}`;
-
       card.innerHTML = `
         <h3>${name}</h3>
         <p><b>Total Score:</b> ${score}</p>
         <p><b>Priority:</b> ${priority}</p>
       `;
-
       container.appendChild(card);
     });
 });
 </script>
-
 </body>
 </html>
