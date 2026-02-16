@@ -56,7 +56,6 @@
     border-radius: 14px;
     padding: 18px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    position: relative;
   }
 
   .priority {
@@ -98,7 +97,7 @@
     font-size: 1.1rem;
   }
 
-  /* ---------- SCORE DOT ---------- */
+  /* ---------- DOTS ---------- */
   .dot {
     width: 14px;
     height: 14px;
@@ -106,7 +105,7 @@
   }
 
   .dot.red { background: #c0392b; }
-  .dot.orange { background: #e67e22; }
+  .dot.yellow { background: #f1c40f; }
   .dot.green { background: #27ae60; }
 
   .score {
@@ -121,22 +120,36 @@
 <body>
 <div class="container">
 
-  <!-- INTRO / DEFINITIONS -->
+  <!-- INTRO -->
   <div class="intro">
-    <h2>How to Read These Hotspot Cards</h2>
-    <p>
-      Each card summarizes conditions at a wildlife–vehicle collision hotspot.
-      Scores combine ecological impact, infrastructure condition, and movement
-      barriers to identify locations where mitigation would provide the greatest benefit.
-    </p>
+  <h2>How to Read These Hotspot Cards</h2>
 
-    <div class="definitions">
-      <div><strong>🐾 Aquatic Organism Passage:</strong> Ability for fish and other aquatic species to move through the structure.</div>
-      <div><strong>🏗 Structural Condition:</strong> Physical condition of the culvert or crossing.</div>
-      <div><strong>🌍 Geomorphic Compatibility:</strong> How well the structure matches natural stream shape and flow.</div>
-      <div><strong>🟢 Open Ratio:</strong> Width of structure relative to stream width (lower = more restrictive).</div>
-    </div>
+  <p>
+    Each card summarizes environmental and structural conditions at our 13
+    wildlife–vehicle collision hotspot locations.
+  </p>
+
+  <p>
+    Colored dots show how well each site supports wildlife movement and stream function.
+  </p>
+
+  <div class="definitions">
+    <div><strong>🟢 Green (3):</strong> Conditions are good and closely match natural stream and wildlife needs.</div>
+    <div><strong>🟡 Yellow (2):</strong> Conditions are functional but partially limiting.</div>
+    <div><strong>🔴 Red (1):</strong> Conditions strongly limit wildlife movement or natural stream processes.</div>
+
+    <div><strong>💧 Aquatic Organism Passage (AOP):</strong> Ability for aquatic species to move through the structure.</div>
+    <div><strong>🛠️ Structural Condition (SC):</strong> Physical condition of the culvert or crossing.</div>
+    <div><strong>🌍 Geomorphic Compatibility (GC):</strong> How well the structure matches natural stream shape and flow.</div>
   </div>
+</div>
+
+  container.appendChild(card);
+});
+</script>
+
+</body>
+</html>
 
   <!-- CARDS -->
   <div class="cards" id="cards"></div>
@@ -144,25 +157,25 @@
 
 <script>
 const data = [
-  { site: "Berlin (93749)", priority: "Low", score: 12, passage: "Full Passage", structure: "Good", geomorph: "Mostly Compatible" },
-  { site: "Barrington (515)", priority: "Medium", score: 9, passage: "Full Passage", structure: "Good", geomorph: "Partially Compatible" },
-  { site: "Ossipee (96289)", priority: "Medium", score: 9, passage: "Full Passage", structure: "Fair", geomorph: "Partially Compatible" },
-  { site: "Stratham (471)", priority: "Medium", score: 9, passage: "Reduced Passage", structure: "Good", geomorph: "Wetland" },
-  { site: "Alton (98140)", priority: "Medium", score: 8, passage: "Reduced Passage", structure: "Good", geomorph: "Partially Compatible" },
-  { site: "Barrington (624)", priority: "Medium", score: 8, passage: "Reduced Passage", structure: "Good", geomorph: "Mostly Impassable" },
-  { site: "Epsom (226)", priority: "Medium", score: 7, passage: "Reduced Passage", structure: "Good", geomorph: "Mostly Impassable" },
-  { site: "Concord (34377)", priority: "Medium", score: 7, passage: "Reduced Passage", structure: "Fair", geomorph: "Partially Compatible" },
-  { site: "Epping (106527)", priority: "High", score: 6, passage: "Reduced Passage", structure: "Fair", geomorph: "Mostly Impassable" },
-  { site: "Berlin (93607)", priority: "Medium", score: 8, passage: "No Passage", structure: "Good", geomorph: "Partially Compatible" },
-  { site: "Epsom (12924)", priority: "High", score: 6, passage: "No Passage", structure: "Good", geomorph: "Mostly Impassable" },
-  { site: "Lebanon (3689)", priority: "High", score: 4, passage: "No Passage", structure: "Poor", geomorph: "Mostly Impassable" },
-  { site: "Newberry (4180)", priority: "Medium", score: 7, passage: "No Passage", structure: "Good", geomorph: "Partially Compatible" }
+  { site:"Berlin (93749)", priority:"Low", total:12, AOP:3, SC:3, GC:3, Open:3 },
+  { site:"Barrington (515)", priority:"Medium", total:9, AOP:3, SC:3, GC:2, Open:1 },
+  { site:"Ossipee (96289)", priority:"Medium", total:9, AOP:3, SC:2, GC:2, Open:2 },
+  { site:"Stratham (471)", priority:"Medium", total:9, AOP:2, SC:3, GC:2, Open:2 },
+  { site:"Alton (98140)", priority:"Medium", total:8, AOP:2, SC:3, GC:2, Open:1 },
+  { site:"Barrington (624)", priority:"Medium", total:8, AOP:2, SC:3, GC:1, Open:2 },
+  { site:"Epsom (226)", priority:"Medium", total:7, AOP:2, SC:3, GC:1, Open:1 },
+  { site:"Concord (34377)", priority:"Medium", total:7, AOP:2, SC:2, GC:2, Open:1 },
+  { site:"Epping (106527)", priority:"High", total:6, AOP:2, SC:2, GC:1, Open:1 },
+  { site:"Berlin (93607)", priority:"Medium", total:8, AOP:1, SC:3, GC:2, Open:2 },
+  { site:"Epsom (12924)", priority:"High", total:6, AOP:1, SC:3, GC:1, Open:1 },
+  { site:"Lebanon (3689)", priority:"High", total:4, AOP:1, SC:1, GC:1, Open:1 },
+  { site:"Newberry (4180)", priority:"Medium", total:7, AOP:1, SC:3, GC:2, Open:1 }
 ];
 
-function scoreColor(score) {
-  if (score <= 5) return "red";
-  if (score <= 8) return "orange";
-  return "green";
+function dotColor(value) {
+  if (value === 3) return "green";
+  if (value === 2) return "yellow";
+  return "red";
 }
 
 const container = document.getElementById("cards");
@@ -176,26 +189,19 @@ data.forEach(d => {
     <h3>${d.site}</h3>
 
     <div class="row">
-      <div class="label"><span class="icon">🐾</span>${d.passage}</div>
-      <div class="dot ${scoreColor(d.score)}"></div>
+      <div class="label"><span class="icon">💧</span>Aquatic Passage</div>
+      <div class="dot ${dotColor(d.AOP)}"></div>
     </div>
 
     <div class="row">
-      <div class="label"><span class="icon">🏗</span>${d.structure}</div>
-      <div class="dot ${scoreColor(d.score)}"></div>
+      <div class="label"><span class="icon">🛠️</span>Structural Condition</div>
+      <div class="dot ${dotColor(d.SC)}"></div>
     </div>
 
     <div class="row">
-      <div class="label"><span class="icon">🌍</span>${d.geomorph}</div>
-      <div class="dot ${scoreColor(d.score)}"></div>
+      <div class="label"><span class="icon">🌍</span>Geomorphic Compatibility</div>
+      <div class="dot ${dotColor(d.GC)}"></div>
     </div>
 
-    <div class="score">Total Score: ${d.score}</div>
+    <div class="score">Total Score: ${d.total}</div>
   `;
-
-  container.appendChild(card);
-});
-</script>
-
-</body>
-</html>
